@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:myfirstapp/Constantes.dart' as con;
 import 'package:myfirstapp/Principal.dart';
 
-class LoginClase extends StatefulWidget {
-  const LoginClase({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  State<LoginClase> createState() => _LoginClaseState();
+  State<Login> createState() => _LoginState();
 }
 
-class _LoginClaseState extends State<LoginClase> {
+class _LoginState extends State<Login> {
   bool verTexto = true;
   String? labelToast;
 

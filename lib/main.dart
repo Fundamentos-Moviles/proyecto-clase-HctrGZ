@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myfirstapp/Dependencias.dart';
+import 'package:myfirstapp/ExampleDependencias.dart';
 import 'package:myfirstapp/Listas.dart';
 import 'package:myfirstapp/LoginClase.dart';
 import 'package:myfirstapp/Principal.dart';
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Listas(name: 'Alex', num: '23'),
+      home: const App(),
     );
   }
 }

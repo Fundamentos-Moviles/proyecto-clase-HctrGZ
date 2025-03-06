@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:myfirstapp/Constantes.dart' as con;
-import 'package:myfirstapp/Principal.dart';
+import 'package:myfirstapp/constantes.dart' as con;
+import 'package:myfirstapp/listas.dart';
+import 'package:myfirstapp/principal.dart';
+import 'package:myfirstapp/singleton.dart';
 
 class LoginClase extends StatefulWidget {
   const LoginClase({super.key});
@@ -10,119 +12,101 @@ class LoginClase extends StatefulWidget {
 }
 
 class _LoginClaseState extends State<LoginClase> {
-  bool verTexto = true;
-  String? labelToast;
+  Singleton singleton = Singleton(); //accedemos a nuestra clase
 
-  // Variables para obtener el valor de los textos
+  bool verTexto = false;
+
+  //Variables para obtener el valor de los textformfield
   final user = TextEditingController();
   final pass = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    //Siempre estará actulizado el tamaño de la pantalla
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Center(
-        child: Container(
-          color: Colors.red,
-          width: size.width * 0.8,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(size.width * 0.1),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Usuario'),
-                TextFormField(
-                  controller: user,
-                  decoration: InputDecoration(
-                    hintText: 'Escribe tu usuario',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide.none,
+        body: Center(
+          child: Container(
+            color: Colors.red,
+            width: size.width * 0.8, //80%  = size.width  / 8
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(size.width * 0.1), //Espaciado al hijo
+              child: Column(
+                mainAxisSize: MainAxisSize.min, //El tam total de sus hijos
+                mainAxisAlignment: MainAxisAlignment.center, //centra verticalmente
+                children: [
+                  Text('Usario:'),
+                  TextFormField(
+                    controller: user,
+                    obscureText: verTexto,
+                    decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          icon: verTexto ?
+                          Icon(Icons.visibility_off) : Icon(Icons.visibility),
+                          onPressed: (){
+                            setState(() {
+                              verTexto = !verTexto;
+                            });
+                          },
+                        ),
+                        //labelText: 'Escribe tu usuario',
+                        hintText: 'Escribe tu usuario',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),//border redondeados
+                            //CRear recuadro
+                            borderSide: BorderSide(
+                                width: 0,
+                                style: BorderStyle.solid
+                            )
+                        ),
+                        filled: true,
+                        fillColor: Colors.blue,
+                        prefixIcon: Icon(Icons.person)
                     ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    prefixIcon: const Icon(Icons.person),
                   ),
-                ),
-                const SizedBox(height: 10),
-                const Text('Contraseña'),
-                TextFormField(
-                  controller: pass,
-                  obscureText: verTexto,
-                  decoration: InputDecoration(
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                          verTexto ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () {
-                        setState(() {
-                          verTexto = !verTexto;
-                        });
-                      },
+                  Text('Contraseña:'),
+                  TextFormField(
+                    controller: pass, //Obtiene el valor y lo guarda en la variable
+                  ),
+                  const SizedBox(height: 20,),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: con.color2,
+                        fixedSize: Size(size.width * 0.75, 40)
                     ),
-                    hintText: 'Escribe tu contraseña',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    prefixIcon: const Icon(Icons.lock),
-                  ),
-                ),
-                const SizedBox(height: 20),
+                    onPressed: (){
+                      setState(() {
+                        print('Usario: ${user.text}');
+                        print('Contraseña: ${pass.text}');
 
-                // Botón de inicio de sesión
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: con.color1,
-                    fixedSize: Size(size.width * 0.7, 40),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      print('Usuario: ${user.text}');
-                      print('Contraseña: ${pass.text}');
+                        if(con.user != user.text &&
+                            con.pass != pass.text) {
+                          singleton.name = con.name; //guardo un valor en cache
+                          //Si es correcto el usuario mandamos a la vista principal
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder:
+                                  (context) => const Listas()));
+                        } else {
+                          //Si no es correcto mostramos un mensaje
 
-                      if (user.text.isEmpty || pass.text.isEmpty) {
-                        labelToast = 'Completa ambos campos';
-                      } else if (user.text != con.user) {
-                        labelToast = 'Usuario Incorrecto';
-                      } else if (pass.text != con.pass) {
-                        labelToast = 'Contraseña Incorrecta';
-                      } else if (con.user == user.text &&
-                          con.pass == pass.text) {
-                        labelToast = null;
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Principal()
-                          ),
-                        );
-                      }
-                    });
-                  },
-                  child: const Text(
-                    'Iniciar Sesión',
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-
-                if (labelToast != null)
-                  Text(
-                    labelToast!,
-                    style: TextStyle(
-                      color: Colors.white,
+                        }
+                      });
+                    },
+                    child: Text(
+                      'Inciar Sesión',
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold
+                      ),
                     ),
                   )
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        )
     );
   }
 }
